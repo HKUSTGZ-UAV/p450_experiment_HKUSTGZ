@@ -11,15 +11,15 @@ if ping -c 1 $IP1 &> /dev/null; then
     if ping -c 1 $LIDAR_IP &> /dev/null; then
         echo "MID360: $LIDAR_IP is reachable."
         # MID360+G1
-        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_mid360.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment gimbal_server.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming.launch; exec bash"'
+        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_mid360.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment gimbal_server.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming.launch; exit ; exec bash"'
     else
         echo "MID360: $LIDAR_IP is not reachable."
         # S3+G1+t265
-        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_t265.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment gimbal_server.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming.launch; exec bash"'
+        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_t265.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment gimbal_server.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming.launch; exit ; exec bash"'
     fi
 else
     echo "G1: $IP1 is not reachable."
@@ -28,15 +28,15 @@ else
     if ping -c 1 $LIDAR_IP &> /dev/null; then
         echo "MID360: $LIDAR_IP is reachable."
         # mid360+d435i
-        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_mid360.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment rs_camera_d435i.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming_d435i.launch; exec bash"'
+        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_mid360.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment rs_camera_d435i.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming_d435i.launch; exit ; exec bash"'
     else
         echo "MID360: $LIDAR_IP is not reachable."
         # s3+d435i+t265
-        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_t265.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment rs_camera_d435i.launch; exec bash"' \
-    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming_d435i.launch; exec bash"'
+        gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment p450_onboard_t265.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 3; roslaunch p450_experiment rs_camera_d435i.launch; exit ; exec bash"' \
+    	--tab -e 'bash -c "sleep 5; source ~/.bashrc; roslaunch p450_experiment video_streaming_d435i.launch; exit ; exec bash"'
     fi
 fi
 

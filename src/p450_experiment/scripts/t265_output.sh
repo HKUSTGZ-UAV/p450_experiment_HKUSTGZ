@@ -3,4 +3,4 @@
 export SUDO_PASS="amov"
 echo $SUDO_PASS | sudo -S /usr/local/bin/EnableGpio_for_USB.sh \
 
-gnome-terminal --window -e 'bash -c "roslaunch p450_experiment rs_t265.launch; exec bash"' \
+gnome-terminal --window -e 'bash -c "roslaunch p450_experiment rs_t265.launch; exit ; exec bash"' \

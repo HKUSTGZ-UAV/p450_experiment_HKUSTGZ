@@ -1,6 +1,6 @@
 common:
     lid_topic:  "/livox/lidar"   #雷达话题
-    imu_topic:  "/livox/imu"     #IMU数据话题
+    imu_topic:  "/uav1/mavros/imu/data_raw"     #IMU数据话题
     time_sync_en: false         # 是否启用外部时间同步
     time_offset_lidar_to_imu: 0.0 # LiDAR和IMU之间的时间偏移,这个值如果已经标定过，您可以设置为非零值。如果不清楚时间偏移，则可以保持为0
                              
