@@ -12,9 +12,9 @@ Land_mode : 1
 
 ##　地理围栏，根据实际情况设置
 geo_fence:
-  x_min: -10
-  x_max: 10
-  y_min: -10
-  y_max: 10
+  x_min: -30
+  x_max: 30
+  y_min: -30
+  y_max: 30
   z_min: -3.5
   z_max: 10
