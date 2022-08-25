@@ -34,5 +34,10 @@
 	<!-- run the ground_station_msg.cpp -->
 	<node pkg="prometheus_station" type="ground_station_msg" name="ground_station_msg" output="screen" launch-prefix="gnome-terminal --tab --">	
 	</node>
+		<!-- run the rosbag.cpp -->
+	<node pkg="rosbag" type="record" name="bag_record" output="screen" args = "/prometheus/drone_state -o subset">	
+		
+	</node>	
+
 </launch>
 

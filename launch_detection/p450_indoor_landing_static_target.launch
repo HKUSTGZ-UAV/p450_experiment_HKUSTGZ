@@ -26,12 +26,12 @@
 		<!-- 2021.1.18 起始点尽量低一点，起飞至1m -->
 		<param name="start_point_x" value="0.0" />
 		<param name="start_point_y" value="0.0" />
-		<param name="start_point_z" value="0.8" />
+		<param name="start_point_z" value="0.6" />
 		<!-- 相机安装偏差 -->
 		<!-- 2021.1.18 相机偏移量优化 -->
-		<param name="camera_offset_x" value="0.17" />
-		<param name="camera_offset_y" value="-0.09" />
-		<param name="camera_offset_z" value="-0.07" />
+		<param name="camera_offset_x" value="0" />
+		<param name="camera_offset_y" value="0" />
+		<param name="camera_offset_z" value="0" />
 		<!-- 追踪控制参数 -->
 		<!-- 2021.1.18 飞机离地高度和相机中心相对与二维码中心的直线距离小于等于0.3,触发land指令 -->
 		<param name="kpx_land" value="0.4" />
