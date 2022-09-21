@@ -10,12 +10,12 @@
 
     <node pkg="prometheus_detection" type="siam_rpn.py" name="siamRPN" output="screen" launch-prefix="gnome-terminal --tab --" >
         <param name="camera_topic" type="string" value="/prometheus/sensor/monocular_front/image_raw" />
-        <param name="camera_info" type="string" value="$(find prometheus_gazebo)/config/camera_config/camera_param_gazebo_monocular.yaml" />
-        <param name="uav_id" type="string" value="1" />
+        <param name="camera_info" type="string" value="$(find p450_experiment)/config/camera_param_p450_monocular.yaml" />
+        <param name="uav_id" type="string" value="2" />
     </node>
 
     <node pkg="prometheus_detection" type="gstreamer_rtsp_stream.py" name="gstreamer_rtsp_stream" output="screen" launch-prefix="gnome-terminal --tab --">
-        <param name="camera_topic" value="/uav1/prometheus/object_detection/siamrpn_tracker/detection"/>
+        <param name="camera_topic" value="/uav2/prometheus/object_detection/siamrpn_tracker/detection"/>
         <param name="config_info" value="$(find prometheus_detection)/py_nodes/rtsp_stream/encode_config.yaml"/>
     </node>
 

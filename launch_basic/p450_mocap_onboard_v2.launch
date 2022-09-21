@@ -1,5 +1,5 @@
 <launch>
-	<arg name="uav_id" default="1"/>
+	<arg name="uav_id" default="2"/>
     <arg name="sim_mode" default="false"/>
     <arg name="flag_printf" default="true"/>
     <!-- 如果是matlab配置为ATT_CTRL_MODE，则此处要设置为True-->
@@ -17,7 +17,7 @@
 
 	<!-- vicon/mocap 定位设备vrpn ROS driver ,主机地址不同，相应的IP地址参数修改-->
 	<include file="$(find vrpn_client_ros)/launch/sample.launch">
-		<arg name="server" value="192.168.31.33"/>
+		<arg name="server" value="192.168.31.79"/>
 	</include>
 
 	<!-- 启动 mavros，与飞机通信 -->
