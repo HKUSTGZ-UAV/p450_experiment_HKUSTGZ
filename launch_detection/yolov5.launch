@@ -1,0 +1,7 @@
+<launch>
+	<node pkg="prometheus_detection" type="yolov5_tensorrt_client.py" name="yolov5_client" output="screen" >
+		<param name="camera_parameters" type="string" value="$(find p450_experiment)/config/camera_param_p450_monocular.yaml" />
+		<param name="pub_track_topic" type="string" value="/prometheus/object_detection/siamrpn_tracker" />
+		<param name="uav_id" type="int" value="1" />
+	</node>
+</launch>

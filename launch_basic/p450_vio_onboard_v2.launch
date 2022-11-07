@@ -1,5 +1,5 @@
 <launch>
-	<arg name="uav_id" default="1"/>
+    <arg name="uav_id" default="1"/>
     <arg name="sim_mode" default="false"/>
     <arg name="flag_printf" default="true"/>
     <!-- 如果是matlab配置为ATT_CTRL_MODE，则此处要设置为True-->
@@ -12,12 +12,11 @@
         <param name="sim_mode" value="$(arg sim_mode)" />
 		<param name="flag_printf" value="$(arg flag_printf)" />
         <param name="control/enable_external_control" value="$(arg control/enable_external_control)" />
-		<rosparam command="load" file="$(find p450_experiment)/config/uav_control_mocap.yaml" />
+		<rosparam command="load" file="$(find p450_experiment)/config/uav_control_vio.yaml" />
 	</node>
 
-	<!-- vicon/mocap 定位设备vrpn ROS driver ,主机地址不同，相应的IP地址参数修改-->
-	<include file="$(find vrpn_client_ros)/launch/sample.launch">
-		<arg name="server" value="192.168.31.39"/>
+	<!-- T265 定位设备-->
+	<include file="$(find p450_experiment)/launch_basic/rs_t265.launch">
 	</include>
 
 	<!-- 启动 mavros，与飞机通信 -->
