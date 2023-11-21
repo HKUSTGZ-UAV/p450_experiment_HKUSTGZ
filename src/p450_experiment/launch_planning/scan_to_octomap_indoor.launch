@@ -1,6 +1,7 @@
 <launch>
 	<!-- run the laser_to_pointcloud -->
   <node pkg="plan_env" type="laser_to_pointcloud" name="laser_to_pointcloud" output="screen">
+  	<remap from="/scan_filtered" to="/uav1/scan_filtered"/>
   </node>
 
   <!-- <node pkg="plan_env" type="p450_experiment" name="laser2pointcloud" output="screen">

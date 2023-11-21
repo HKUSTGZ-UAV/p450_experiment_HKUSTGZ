@@ -2,7 +2,7 @@
 
     <arg name="swarm_num" default="1"/>
     <arg name="autoload" default="true"/>
-    <arg name="uav_control_start" default="gnome-terminal -- /home/amov/p450_experiment/src/p450_experiment/scripts/p450_outdoor_onboard.sh"/>
+    <arg name="uav_control_start" default="gnome-terminal -- roslaunch p450_experiment p450_mocap_onboard.launch"/>
     <arg name="close_uav_control" default="gnome-terminal -- rosnode kill `rosnode list | grep -v /communication_bridge | grep -v /rosout | grep -v /rosapi | grep -v /rosbridge_websocket`"/>
     <arg name="swarm_control_start" default=""/>
     <arg name="close_swarm_control" default=""/>
@@ -10,11 +10,16 @@
     <arg name="uav_id" default="1"/>
     <arg name="is_simulation" default="0"/>
     <arg name="swarm_data_update_timeout" default="5"/>
+    
+    <!-- 控制一些数据的转发给地面站或其他机器的频率 -->
+    <!-- 无人机状态和无人机控制状态发送频率，设置为0则以订阅频率发送，不能超过订阅频率 -->
+    <arg name="uav_basic_hz" default="5"/>
+    <!-- 吊舱状态发送频率，设置为0则以订阅频率发送 -->
+    <arg name="gimbal_basic_hz" default="1"/>
 
-    <!-- Prometheus功能包路径 -->
     <arg name="prometheus_moudles_url" default="/home/amov/p450_experiment/src/p450_experiment/"/>
     <!-- 单机配置文件路径 -->
-    <arg name="uav_control_yaml" default="config/prometheus_control_config/uav_control_outdoor.yaml"/>
+    <arg name="uav_control_yaml" default="config/prometheus_control_config/uav_control_indoor.yaml"/>
     <!-- 轨迹配置文件路径 -->
     <arg name="uav_command_yaml" default="config/prometheus_control_config/uav_command_pub.yaml"/>
     <include file="$(find p450_experiment)/launch_basic/minihomer_bridge.launch">
@@ -32,9 +37,11 @@
         <arg name="prometheus_moudles_url"    value="$(arg prometheus_moudles_url)"/>
         <arg name="uav_control_yaml"          value="$(arg uav_control_yaml)"/>
         <arg name="uav_command_yaml"        value="$(arg uav_command_yaml)"/>
-	</include>
-
-    	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+        
+        <arg name="uav_basic_hz"    value="$(arg uav_basic_hz)"/>
+        <arg name="gimbal_basic_hz"        value="$(arg gimbal_basic_hz)"/>
+	</include> 
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
 	</include>
 </launch>
 

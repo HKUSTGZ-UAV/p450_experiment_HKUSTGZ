@@ -2,7 +2,7 @@
  
   <node name="lidar01" pkg="bluesea2" type="bluesea2_node" output="screen" >
     #ROS#
-    <param name="topic" value="/scan"/>
+    <param name="topic" value="/uav1/scan"/>
     <param name="frame_id" value="uav1/lidar_link" />
      #DATA#
     <param name="logPath" value="/tmp/log"/>

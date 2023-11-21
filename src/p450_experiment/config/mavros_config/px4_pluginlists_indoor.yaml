@@ -10,7 +10,6 @@ plugin_blacklist:
 - setpoint_position
 - setpoint_trajectory
 - setpoint_velocity
-- vfr_hud
 - wind_estimation
 - global_position
 - safety_area
@@ -60,6 +59,7 @@ plugin_whitelist: # 如果模块即被同时声明在plugin_blacklist和plugin_w
 - setpoint_attitude
 - sys_status
 - sys_time
+- vfr_hud
 
 # extras
 - distance_sensor
