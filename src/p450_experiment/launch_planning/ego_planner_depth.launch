@@ -2,7 +2,7 @@
   <arg name="uav_id" default="1"/>
 
   <!-- ego_planner 仿真 -->
-  <include file="$(find p250_experiment)/launch_planning/advanced_param.xml">
+  <include file="$(find p450_experiment)/launch_planning/advanced_param.xml">
     <!-- 无人机编号 -->
     <arg name="uav_id" value="1"/>
     <!-- 地图尺寸 -->

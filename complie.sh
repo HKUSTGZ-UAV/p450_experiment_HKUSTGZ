@@ -5,7 +5,7 @@ catkin_make --source src/Prometheus/Modules/uav_control --build build/uav_contro
 catkin_make --source src/Prometheus/Modules/communication --build build/communication
 #catkin_make --source src/object_circlex_detection --build build/object_circlex_detection
 #catkin_make --source src/gimbal_control/src/gimbal_control --build build/gimbal_control
-catkin_make --source src/p250_experiment --build build/p250_experiment
+catkin_make --source src/p450_experiment --build build/p450_experiment
 #catkin_make --source src/mission --build build/mission
 #./src/siamprn_object_tracking/complie.sh && \
 #catkin_make --source src/siamprn_object_tracking/ros/src/track_ros --build build/siamrpn_track
@@ -35,5 +35,5 @@ catkin_make --source src/Prometheus/Modules/simulator_utils --build build/simula
 catkin_make --source src/Prometheus/Modules/ego_planner_swarm --build build/ego_planner_swarm
 catkin_make --source src/Prometheus/Modules/motion_planning --build build/motion_planning
 
-# for vins-fusion
-#catkin_make --source src/vins-fusion --build build/vins-fusion
+# for bluesea2
+catkin_make --source src/bluesea2 --build build/bluesea2

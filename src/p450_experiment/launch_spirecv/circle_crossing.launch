@@ -1,5 +1,5 @@
 <launch>
-    <node pkg="p450_mission" type="yolov5_tracking" name="yolov5_tracking" output="screen">
+    <node pkg="p450_mission" type="circle_crossing" name="circle_crossing" output="screen">
 		<param name="uav_id" value="1" />
 		<!-- 视觉丢失次数阈值 -->
 		<param name="Thres_vision" value="10" />

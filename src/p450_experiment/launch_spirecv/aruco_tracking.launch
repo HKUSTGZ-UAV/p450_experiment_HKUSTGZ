@@ -1,6 +1,6 @@
 <launch>
-    <node pkg="p230_mission" type="aruco_tracking" name="aruco_tracking" output="screen">
-		<param name="uav_id" value="8" />
+    <node pkg="p450_mission" type="aruco_tracking" name="aruco_tracking" output="screen">
+		<param name="uav_id" value="1" />
 		<!-- 视觉丢失次数阈值 -->
 		<param name="Thres_vision" value="10" />
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(p230_mission)
+project(p450_mission)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -77,8 +77,8 @@ include_directories(
 add_executable(aruco_tracking aruco_tracking/aruco_tracking.cpp)
 target_link_libraries(aruco_tracking ${catkin_LIBRARIES})
 
-# add_executable(circle_crossing circle_crossing/circle_crossing.cpp)
-# target_link_libraries(circle_crossing ${catkin_LIBRARIES})
+add_executable(circle_crossing circle_crossing/circle_crossing.cpp)
+target_link_libraries(circle_crossing ${catkin_LIBRARIES})
 
 add_executable(yolov5_tracking yolov5_tracking/yolov5_tracking.cpp)
 target_link_libraries(yolov5_tracking ${catkin_LIBRARIES})

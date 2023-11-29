@@ -42,12 +42,12 @@ void droneStateCb(const prometheus_msgs::UAVState::ConstPtr &msg)
 
 void VisionCb(const spirecv_msgs::TargetsInFrame::ConstPtr &msg)
 {
+    g_Detection_raw.mode = false;
     for(auto &target : msg->targets)
     {
-        if(target.tracked_id != goto_id && target.mode == false)
+        if(/*target.tracked_id != goto_id && */target.mode == false)
             continue;
         g_Detection_raw = target;
-
     }
     // g_Detection_raw = *msg;
     pos_body_frame[0] = g_Detection_raw.pz + camera_offset[0];
@@ -147,8 +147,8 @@ int main(int argc, char **argv)
     // comm.Move_mode = prometheus_msgs::UAVCommand::XYZ_VEL_BODY;
 
     // 到达那个二维码front
-    if (!checkInput(goto_id))
-        return 0;
+    // if (!checkInput(goto_id))
+    //     return 0;
 
     while (ros::ok())
     {
@@ -158,7 +158,8 @@ int main(int argc, char **argv)
             PCOUT(-1, WHITE, "Waiting for enter COMMAND_CONTROL state");
             continue;
         }
-        if(g_Detection_raw.score != 1.0 || g_Detection_raw.mode == true)
+        // if(g_Detection_raw.score != 1.0 || g_Detection_raw.mode == true)
+        if(g_Detection_raw.mode == false)
         {
             g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Current_Pos_Hover;
             PCOUT(-1, GREEN, "Waiting for aruco detected!");
