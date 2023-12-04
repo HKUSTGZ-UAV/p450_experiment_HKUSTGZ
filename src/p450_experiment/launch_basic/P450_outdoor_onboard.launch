@@ -22,6 +22,7 @@
 		<param name="flag_printf" value="ture" />
         <param name="control/enable_external_control" value="false" />
 		<rosparam command="load" file="$(find prometheus_uav_control)/launch/uav_control_outdoor.yaml" />
+		<rosparam command="load" file="$(find p450_experiment)/config/sensor_tf_offset.yaml" />
 	</node>
 </launch>
 
