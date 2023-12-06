@@ -14,7 +14,7 @@
       <param name="frame_id" type="string" value="world" />
       <!-- <param name="base_frame_id" type="string" value="/uav1/lidar_link" /> -->
       <!-- 传感器最大感知范围 (speedup!) -->
-      <param name="sensor_model/max_range" value="40.0" />
+      <param name="sensor_model/max_range" value="10.0" />
       <!-- <param name="height_map" value="false"/> -->
       <!-- <param name="color" type="float" value=""> -->
       <!-- 局部点云话题输入 -->
