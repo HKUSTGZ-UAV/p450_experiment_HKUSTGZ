@@ -12,12 +12,12 @@
     <arg name="swarm_data_update_timeout" default="5"/>
 
     <!-- Prometheus功能包路径 -->
-    <arg name="prometheus_moudles_url" default="/home/amov/Prometheus/Modules/"/>
+    <arg name="prometheus_moudles_url" default="/home/amov/p450_experiment/src/p450_experiment/"/>
     <!-- 单机配置文件路径 -->
-    <arg name="uav_control_yaml" default="uav_control/launch/uav_control_outdoor.yaml"/>
+    <arg name="uav_control_yaml" default="config/prometheus_control_config/uav_control_outdoor.yaml"/>
     <!-- 轨迹配置文件路径 -->
-    <arg name="uav_command_yaml" default="uav_control/launch/terminal_control.yaml"/>
-    <include file="$(find prometheus_communication_bridge)/launch/minihomer_bridge.launch">
+    <arg name="uav_command_yaml" default="config/prometheus_control_config/uav_command_pub.yaml"/>
+    <include file="$(find p450_experiment)/launch_basic/minihomer_bridge.launch">
 		
         <arg name="swarm_num"                 value="$(arg swarm_num)" />
         <arg name="autoload"                  value="$(arg autoload)" />
