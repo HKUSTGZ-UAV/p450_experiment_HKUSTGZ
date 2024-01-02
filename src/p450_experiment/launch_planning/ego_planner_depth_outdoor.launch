@@ -19,10 +19,10 @@
     <!-- 相机及深度信息仿真中没有使用，此处可忽略(真机中使用) -->
     <arg name="camera_pose_topic" value="/prometheus/camera_odom"/>
     <arg name="depth_topic" value="/camera/depth/image_rect_raw"/>
-    <arg name="cx" value="326.2303466796875"/>
-    <arg name="cy" value="235.4907684326172"/>
-    <arg name="fx" value="387.4337158203125"/>
-    <arg name="fy" value="387.4337158203125"/>
+    <arg name="cx" value="314.68572998046875"/>
+    <arg name="cy" value="241.51800537109375"/>
+    <arg name="fx" value="385.01849365234375"/>
+    <arg name="fy" value="385.01849365234375"/>
     <!-- 点云信息，仿真中由map_generator产生 -->
     <arg name="cloud_topic" value=""/>
     <!-- scan -->

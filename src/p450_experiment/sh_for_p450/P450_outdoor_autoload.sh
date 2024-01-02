@@ -1,1 +1,1 @@
-gnome-terminal --window -e 'bash -c "source /opt/ros/noetic/setup.bash && source /home/amov/prometheus_mavros/devel/setup.bash && source ~/Prometheus/devel/setup.bash && source /home/amov/realsense_ws/devel/setup.bash && roslaunch prometheus_communication_bridge P450_outdoor_communication.launch ; exec bash"'
+gnome-terminal --window -e 'bash -c "source /opt/ros/noetic/setup.bash && source ~/p450_experiment/devel/setup.bash && roslaunch p450_experiment P450_outdoor_communication.launch; exec bash"' \

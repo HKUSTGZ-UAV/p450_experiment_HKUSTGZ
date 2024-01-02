@@ -2,8 +2,8 @@
 
     <arg name="swarm_num" default="1"/>
     <arg name="autoload" default="true"/>
-    <arg name="uav_control_start" default="gnome-terminal -- roslaunch p450_experiment P450_indoor_onboard.launch"/>
-    <arg name="close_uav_control" default="gnome-terminal -- rosnode kill `rosnode list | grep -v /communication_bridge | grep -v /rosout`"/>
+    <arg name="uav_control_start" default="gnome-terminal -- /home/amov/p450_experiment/src/p450_experiment/scripts/p450_indoor_onboard.sh"/>
+    <arg name="close_uav_control" default="gnome-terminal -- rosnode kill `rosnode list | grep -v /communication_bridge | grep -v /rosout | grep -v /rosapi | grep -v /rosbridge_websocket`"/>
     <arg name="swarm_control_start" default=""/>
     <arg name="close_swarm_control" default=""/>
     <arg name="ground_station_ip" default="192.168.1.123"/>
@@ -13,9 +13,9 @@
     
     <!-- 控制一些数据的转发给地面站或其他机器的频率 -->
     <!-- 无人机状态和无人机控制状态发送频率，设置为0则以订阅频率发送，不能超过订阅频率 -->
-    <arg name="uav_basic_hz" default="10"/>
+    <arg name="uav_basic_hz" default="5"/>
     <!-- 吊舱状态发送频率，设置为0则以订阅频率发送 -->
-    <arg name="gimbal_basic_hz" default="0"/>
+    <arg name="gimbal_basic_hz" default="1"/>
 
     <arg name="prometheus_moudles_url" default="/home/amov/p450_experiment/src/p450_experiment/"/>
     <!-- 单机配置文件路径 -->
@@ -41,5 +41,7 @@
         <arg name="uav_basic_hz"    value="$(arg uav_basic_hz)"/>
         <arg name="gimbal_basic_hz"        value="$(arg gimbal_basic_hz)"/>
 	</include> 
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+	</include>
 </launch>
 

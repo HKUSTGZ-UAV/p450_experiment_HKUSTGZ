@@ -2,8 +2,8 @@
 
     <arg name="swarm_num" default="1"/>
     <arg name="autoload" default="true"/>
-    <arg name="uav_control_start" default="gnome-terminal -- roslaunch prometheus_uav_control P450_outdoor_onboard.launch"/>
-    <arg name="close_uav_control" default="gnome-terminal -- rosnode kill `rosnode list | grep -v /communication_bridge | grep -v /rosout`"/>
+    <arg name="uav_control_start" default="gnome-terminal -- /home/amov/p450_experiment/src/p450_experiment/scripts/p450_outdoor_onboard.sh"/>
+    <arg name="close_uav_control" default="gnome-terminal -- rosnode kill `rosnode list | grep -v /communication_bridge | grep -v /rosout | grep -v /rosapi | grep -v /rosbridge_websocket`"/>
     <arg name="swarm_control_start" default=""/>
     <arg name="close_swarm_control" default=""/>
     <arg name="ground_station_ip" default="192.168.1.123"/>
@@ -34,6 +34,7 @@
         <arg name="uav_command_yaml"        value="$(arg uav_command_yaml)"/>
 	</include>
 
-    
+    	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+	</include>
 </launch>
 

@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     nh.param<float>("kpy_track", kpy_track, 0.1);
     nh.param<float>("kpz_track", kpz_track, 0.1);
 
-    nh.param<int>("uav_id", g_uav_id, 8);
+    nh.param<int>("uav_id", g_uav_id, 1);
 
     // 获取 无人机ENU下的位置
     ros::Subscriber curr_pos_sub = nh.subscribe<prometheus_msgs::UAVState>("/uav" + std::to_string(g_uav_id) + "/prometheus/state", 10, droneStateCb);
@@ -140,10 +140,10 @@ int main(int argc, char **argv)
             // g_command_now.velocity_ref[2] = kpz_track * (pos_body_enu_frame[2] - tracking_delta[2]);
             g_command_now.velocity_ref[0] = 0.5 * (g_Detection_raw.pz - 2.0);
             g_command_now.velocity_ref[1] = -0.8 * g_Detection_raw.px;
-            if(g_Detection_raw.los_ay <= 10)
+            if(g_Detection_raw.los_ay <= -20)
             {
                 g_command_now.velocity_ref[2] = 0.8 * g_Detection_raw.py;
-            }else if(g_Detection_raw.los_ay >= 15){
+            }else if(g_Detection_raw.los_ay >= -15){
                 g_command_now.velocity_ref[2] = -0.8 * g_Detection_raw.py;
             }else{
                 g_command_now.velocity_ref[2] = 0;

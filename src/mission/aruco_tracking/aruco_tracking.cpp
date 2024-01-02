@@ -47,6 +47,7 @@ void VisionCb(const spirecv_msgs::TargetsInFrame::ConstPtr &msg)
     {
         if(/*target.tracked_id != goto_id && */target.mode == false)
             continue;
+        std::cout << "target aruco" << std::endl;
         g_Detection_raw = target;
     }
     // g_Detection_raw = *msg;
@@ -130,12 +131,12 @@ int main(int argc, char **argv)
     nh.param<float>("kpy_track", kpy_track, 0.1);
     nh.param<float>("kpz_track", kpz_track, 0.1);
 
-    nh.param<int>("uav_id", g_uav_id, 8);
+    nh.param<int>("uav_id", g_uav_id, 1);
 
     // 获取 无人机ENU下的位置
     ros::Subscriber curr_pos_sub = nh.subscribe<prometheus_msgs::UAVState>("/uav" + std::to_string(g_uav_id) + "/prometheus/state", 10, droneStateCb);
     // 获取视觉反馈
-    ros::Subscriber vision_sub = nh.subscribe<spirecv_msgs::TargetsInFrame>("/uav" + std::to_string(g_uav_id) + "/spirecv/aruco_detection_with_single_object_tracking", 10, VisionCb);
+    ros::Subscriber vision_sub = nh.subscribe<spirecv_msgs::TargetsInFrame>("/uav" + std::to_string(g_uav_id) + "/spirecv/aruco_detection_with_d435i", 10, VisionCb);
     // 【发布】发送给prometheus_uav_control的命令
     ros::Publisher command_pub = nh.advertise<prometheus_msgs::UAVCommand>("/uav" + std::to_string(g_uav_id) + "/prometheus/command", 10);
     // 获取遥控器状态
