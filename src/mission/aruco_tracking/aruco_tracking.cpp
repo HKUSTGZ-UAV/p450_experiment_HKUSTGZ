@@ -157,7 +157,7 @@ int main(int argc, char **argv)
         if(g_uavcontrol_state.control_state != prometheus_msgs::UAVControlState::COMMAND_CONTROL)
         {
             PCOUT(-1, WHITE, "Waiting for enter COMMAND_CONTROL state");
-            continue;
+            //continue;
         }
         // if(g_Detection_raw.score != 1.0 || g_Detection_raw.mode == true)
         if(g_Detection_raw.mode == false)
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
         {
             distance_to_setpoint = pos_body_frame.norm();
             g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Move;
-            g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_VEL;
+            g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_VEL_BODY;
             // g_command_now.
             // 根据误差计算计算应该给于无人机的速度
             // g_command_now.velocity_ref[0] = kpx_track * (pos_body_enu_frame[0] - tracking_delta[0]);
