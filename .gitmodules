@@ -9,4 +9,4 @@
 	url = https://gitee.com/amovlab1/realsense-ros.git
 [submodule "src/spirecv-ros"]
 	path = src/spirecv-ros
-	url = https://gitee.com/amovlab1/spirecv-ros.git
+	url = https://gitee.com/amovlab1/spirecvkitros.git
