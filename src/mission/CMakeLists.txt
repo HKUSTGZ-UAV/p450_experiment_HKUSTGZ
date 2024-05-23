@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_eigen
   mavros_msgs
   prometheus_msgs
+  spirecv_msgs
 )
 
 ##  System dependencies are found with CMake's conventions
@@ -82,6 +83,9 @@ target_link_libraries(circle_crossing ${catkin_LIBRARIES})
 
 add_executable(yolov5_tracking yolov5_tracking/yolov5_tracking.cpp)
 target_link_libraries(yolov5_tracking ${catkin_LIBRARIES})
+
+add_executable(gimbal_yolov5_tracking gimbal_yolov5_tracking/gimbal_yolov5_tracking.cpp)
+target_link_libraries(gimbal_yolov5_tracking ${catkin_LIBRARIES})
 
 #############
 ## Install ##
