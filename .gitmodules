@@ -10,3 +10,4 @@
 [submodule "src/spirecv-ros"]
 	path = src/spirecv-ros
 	url = https://gitee.com/amovlab1/spirecvkitros.git
+	branch = prometheus_gazebo
