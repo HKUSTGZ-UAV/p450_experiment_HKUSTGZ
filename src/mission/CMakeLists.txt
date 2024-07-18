@@ -27,6 +27,8 @@ find_package(catkin REQUIRED COMPONENTS
 ##  System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
+find_package(SpireCV REQUIRED)
+include_directories(${SV_INCLUDE_DIRS})
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -85,7 +87,10 @@ add_executable(yolov5_tracking yolov5_tracking/yolov5_tracking.cpp)
 target_link_libraries(yolov5_tracking ${catkin_LIBRARIES})
 
 add_executable(gimbal_yolov5_tracking gimbal_yolov5_tracking/gimbal_yolov5_tracking.cpp)
-target_link_libraries(gimbal_yolov5_tracking ${catkin_LIBRARIES})
+target_link_libraries(gimbal_yolov5_tracking ${catkin_LIBRARIES} ${SV_LIBRARIES})
+
+add_executable(gimbal_aruco_landing gimbal_aruco_landing/gimbal_aruco_landing.cpp)
+target_link_libraries(gimbal_aruco_landing ${catkin_LIBRARIES}  ${SV_LIBRARIES})
 
 #############
 ## Install ##

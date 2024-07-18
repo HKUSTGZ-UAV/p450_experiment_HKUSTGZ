@@ -10,7 +10,7 @@ control:
   ## 降落速度
   Land_speed : 0.3
   ##　上锁高度
-  Disarm_height : 0.15
+  Disarm_height : 0.23
   ## 定位源: 0 for MOCAP, 1 for T265, 2 for GAZEBO, 3 for FAKE_ODOM, 4 for GPS, 5 for RTK, 6 for UWB, 7 for VINS,
   location_source : 0
   ## 最大安全速度

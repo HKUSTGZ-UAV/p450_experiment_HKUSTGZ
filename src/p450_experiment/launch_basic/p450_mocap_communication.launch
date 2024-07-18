@@ -19,7 +19,7 @@
 
     <arg name="prometheus_moudles_url" default="/home/amov/p450_experiment/src/p450_experiment/"/>
     <!-- 单机配置文件路径 -->
-    <arg name="uav_control_yaml" default="config/prometheus_control_config/uav_control_indoor.yaml"/>
+    <arg name="uav_control_yaml" default="config/prometheus_control_config/uav_control_indoor_mocap.yaml"/>
     <!-- 轨迹配置文件路径 -->
     <arg name="uav_command_yaml" default="config/prometheus_control_config/uav_command_pub.yaml"/>
     <include file="$(find p450_experiment)/launch_basic/minihomer_bridge.launch">
