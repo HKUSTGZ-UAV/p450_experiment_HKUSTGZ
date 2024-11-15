@@ -34,6 +34,10 @@ catkin_make --source src/mission --build build/mission
 catkin_make --source src/Prometheus/Modules/simulator_utils --build build/simulator_utils
 catkin_make --source src/Prometheus/Modules/ego_planner_swarm --build build/ego_planner_swarm
 catkin_make --source src/Prometheus/Modules/motion_planning --build build/motion_planning
+catkin_make --source src/Prometheus/Modules/FAST_LIO --build build/FAST_LIO
 
 # for bluesea2
 catkin_make --source src/bluesea2 --build build/bluesea2
+
+# for livox_ros_driver2
+catkin_make --source src/livox_ros_driver2 --build build/livox_ros_driver2 -DROS_EDITION=ROS1

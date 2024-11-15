@@ -48,6 +48,13 @@ std::queue<float> last_y_vel;
 std::queue<float> last_z_vel;
 std::queue<float> last_yaw_rate; // 存储在跟踪状态下无人机的偏航数据
 
+bool land_Pxyz_flag = false ;
+float land_coordinate_origin_x = 0.0;
+float land_coordinate_origin_y = 0.0;
+float land_coordinate_origin_z = 0.0;
+bool    land_coordinate_origin_init = false;
+float yaw_tracking_enu = 0;   //rad
+bool    Cx_Cy_init = false;
 
 
 void droneStateCb(const prometheus_msgs::UAVState::ConstPtr &msg)
@@ -228,10 +235,23 @@ int main(int argc, char **argv)
             float y_vel = 0.0;
             float z_vel = 0.0;
             float yaw_rate = 0.0;
+            if (land_coordinate_origin_init)
+            {
+                g_command_now.header.frame_id = "ENU";
+                g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Move;
+                // g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_VEL;
+                g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_POS;
+                g_command_now.yaw_ref = g_UAVState.attitude[2];
+                g_command_now.Yaw_Rate_Mode = false;
+            }else
+            {
+                g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Move;
+                g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_VEL_BODY;
+                g_command_now.Yaw_Rate_Mode = true;
+            }
+            
+            
 
-            g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Move;
-            g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_VEL_BODY;
-            g_command_now.Yaw_Rate_Mode = true;
 
             if(current_state == State::INIT)
             {
@@ -390,33 +410,6 @@ int main(int argc, char **argv)
                                 clear(last_x_vel);
                                 clear(last_y_vel);
                                 clear(last_yaw_rate);
-                                
-                                /*
-                                // 判断GX40角度是否进入俯拍，没有进入则进入
-                                if(std::abs(gimbal_yaw) > 6.0 || std::abs(90 - gimbal_pitch) > 1.0)
-                                {
-                                    std_srvs::SetBool lock;
-                                    lock.request.data = true;
-                                    gimbal_downward_lock_client_.call(lock);
-
-                                    PCOUT(0, GREEN, "gx40 gimbal downward lock!!!");
-                                    message = "gx40 gimbal downward lock!!!";
-                                    message_type = prometheus_msgs::TextInfo::INFO;
-                                }else
-                                {
-                                    // 进入后 进入降落状态
-                                    current_state = State::LANDING;
-                                    is_spirecv_cmd = false;
-                                    // 清空队列
-                                    clear(last_x_vel);
-                                    clear(last_y_vel);
-                                    clear(last_yaw_rate);
-
-                                    PCOUT(0, GREEN, "gx40 gimbal lock head!!!");
-                                    message = "gx40 gimbal lock head!!!";
-                                    message_type = prometheus_msgs::TextInfo::INFO;
-                                }
-                                */
                             }
 
                             tracking_height = height;
@@ -479,229 +472,127 @@ int main(int argc, char **argv)
                 
             }else if(current_state == State::LANDING)
             {
-                // 处理降落过程中的处理逻辑
-                
-                g_command_now.Yaw_Rate_Mode = false;
-                // 降落过程中处于检测，检测未丢失的情况下，进行位置的对齐以及降低高度
-                if(lost_time < min_lost_time)
+                // 根据目标ID，查到对应检测的目标的 cx 和 cy 控制无人机 细微调整位置
+                // 计算吊舱的弧度
+                float gimbal_yaw_radian = M_PI / 180.0 * gimbal_yaw;
+                // 转换画面坐标原点 画面中心为原点的坐标系
+                float new_cx = g_Detection_raw.cx - 0.5;
+                float new_cy = g_Detection_raw.cy - 0.5;
+                // 计算将吊舱转回0度时的cx，cy位置
+                float new_cx_rotated = new_cx * std::cos(-gimbal_yaw_radian) - new_cy * std::sin(-gimbal_yaw_radian);
+                float new_cy_rotated = new_cx * std::sin(-gimbal_yaw_radian) + new_cy * std::cos(-gimbal_yaw_radian);
+                // 转换回原始坐标系
+                float cx = new_cx_rotated + 0.5;
+                float cy = new_cy_rotated + 0.5;
+                // 判断旋转后的数据是否越界
+                if(cx < 0 || cy < 0 || cx > 1 || cy > 1)
                 {
-                    // 如果上一帧处于丢失目标的状态，则将队列清空
-                    if(lost_state != LostState::NOT_LOST)
-                    {
-                        // 清空队列
-                        clear(last_x_vel);
-                        clear(last_y_vel);
-                        clear(last_z_vel);
-                    }
+                    PCOUT(0, RED, "Coordinate Transform Error!!!");
+                    message = "Coordinate Transform Error!!!";
+                    message_type = prometheus_msgs::TextInfo::ERROR;
+                    break;  
+                }
+                // 计算速度，使目标在画面中间  根据高度一定程度加快速度
+                x_vel = kp_x * (0.5 - cy)  * (3 - (tracking_height - height)/(tracking_height - land_height));
+                y_vel = kp_x * (0.5 - cx)  * (3 - (tracking_height - height)/(tracking_height - land_height));
 
-                    // 根据目标ID，查到对应检测的目标的 cx 和 cy 控制无人机 细微调整位置
-                    // 计算吊舱的弧度
-                    float gimbal_yaw_radian = M_PI / 180.0 * gimbal_yaw;
-                    // 转换画面坐标原点 画面中心为原点的坐标系
-                    float new_cx = g_Detection_raw.cx - 0.5;
-                    float new_cy = g_Detection_raw.cy - 0.5;
-                    // 计算将吊舱转回0度时的cx，cy位置
-                    float new_cx_rotated = new_cx * std::cos(-gimbal_yaw_radian) - new_cy * std::sin(-gimbal_yaw_radian);
-                    float new_cy_rotated = new_cx * std::sin(-gimbal_yaw_radian) + new_cy * std::cos(-gimbal_yaw_radian);
-                    // 转换回原始坐标系
-                    float cx = new_cx_rotated + 0.5;
-                    float cy = new_cy_rotated + 0.5;
-                    // 判断旋转后的数据是否越界
-                    if(cx < 0 || cy < 0 || cx > 1 || cy > 1)
+                // 不同高度不同的静止速度，防止降落过程中出现丢失目标的情况
+                if(std::abs(x_vel) + std::abs(y_vel) < static_vel_thresh * (3 - (tracking_height - height)/(tracking_height - land_height)))
+                {
+                    Cx_Cy_init = true;
+                }
+                if(Cx_Cy_init)
+                {
+                    //在水平对齐后悬停，记录目标二维码位置建立降落模型
+                    // 控制降落
+                    if(!land_Pxyz_flag)
                     {
-                        PCOUT(0, RED, "Coordinate Transform Error!!!");
-                        message = "Coordinate Transform Error!!!";
-                        message_type = prometheus_msgs::TextInfo::ERROR;
-                        break;
-                
-                    }
-                    // 计算速度，使目标在画面中间  根据高度一定程度加快速度
-                    x_vel = kp_x * (0.5 - cy)  * (3 - (tracking_height - height)/(tracking_height - land_height));
-                    y_vel = kp_x * (0.5 - cx)  * (3 - (tracking_height - height)/(tracking_height - land_height));
-
-                    // 不同高度不同的静止速度，防止降落过程中出现丢失目标的情况
-                    if(std::abs(x_vel) + std::abs(y_vel) < static_vel_thresh * (3 - (tracking_height - height)/(tracking_height - land_height)))
-                    {
-                        // 控制降落速度
-                        if(height > land_height)
+                        // 控制Z轴速度下降
+                        // z_vel = kp_z * (land_height - height);
+                        // 悬停 
+                        // 循环判断
+                        int count_number_time = hz;// 1 s
+                        while((count_number_time--) > 0)
                         {
-                            // 控制Z轴速度下降
-                            z_vel = kp_z * (land_height - height);
-                        }else if(std::abs(x_vel) + std::abs(y_vel) < static_vel_thresh)
-                        {
-                            /*
-                            // 因其是以吊舱为中心，所以前进一定距离保持以无人机为中心点
-                            g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Move;
-                            g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_POS_BODY;
-                            g_command_now.position_ref[0] = 0;
-                            g_command_now.position_ref[1] = 0;
-                            g_command_now.position_ref[2] = 0;
-                            // 计算吊舱的pitch角度，衍生的一个距离
-                            float advance = std::tan(M_PI / 180 * (90 - gimbal_pitch)) * height;
-                            // 根据吊舱的yaw角，分配给无人机的x，y
-                            if(g_GimbalState.type == 0)//g1
-                            {
-                                // 0.12为g1吊舱到正中心的距离
-                                g_command_now.position_ref[0] = 0.12 + advance * std::cos(M_PI / 180.0 * gimbal_yaw);
-                                g_command_now.position_ref[1] = 0.03 + advance * std::sin(M_PI / 180.0 * gimbal_yaw);
-                            }
-                            else if(g_GimbalState.type == 3)// gx40
-                            {
-                                // 0.09为gx40吊舱到正中心的距离
-                                g_command_now.position_ref[0] = 0.09 + advance * std::cos(M_PI / 180.0 * gimbal_yaw);
-                                g_command_now.position_ref[1] = advance * std::sin(M_PI / 180.0 * gimbal_yaw);
-                            }
-                            
-                            g_command_now.header.stamp = ros::Time::now();
-                            g_command_now.Command_ID = g_command_now.Command_ID + 1;
-                            command_pub.publish(g_command_now);
-                            printf("g_UAVState.position[0] = %f [m] \n",g_UAVState.position[0]);
-                            printf("g_UAVState.position[1] = %f [m] \n",g_UAVState.position[1]);
-                            printf("g_command_now.position_ref[0] = %f [m] \n",g_command_now.position_ref[0]);
-                            printf("g_command_now.position_ref[1] = %f [m] \n",g_command_now.position_ref[1]);
-                            // 留1s执行时间，或者使用循环判断是否到达目标点
-                            sleep(2);
-                            ros::spinOnce();
-                            printf("g_UAVState.position[0] = %f [m] \n",g_UAVState.position[0]);
-                            printf("g_UAVState.position[1] = %f [m] \n",g_UAVState.position[1]);
-                            */
-                            // 因其是以吊舱为中心，所以前进一定距离保持以无人机为中心点
-                            g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Move;
-                            g_command_now.Move_mode = prometheus_msgs::UAVCommand::XYZ_POS_BODY;
-                            g_command_now.position_ref[0] = 0;
-                            g_command_now.position_ref[1] = 0;
-                            g_command_now.position_ref[2] = 0;
-                            // 计算吊舱的pitch角度，衍生的一个距离
-                            float advance = std::tan(M_PI / 180 * (90 - gimbal_pitch)) * height;
-
-                            // 根据吊舱的yaw角，分配给无人机的x，y
-                            if(g_GimbalState.type == 0)//g1
-                            {
-                                // 0.12为g1吊舱到正中心的距离
-                                g_command_now.position_ref[0] = 0.12 + advance * std::cos(M_PI / 180.0 * gimbal_yaw);
-                                g_command_now.position_ref[1] = -0.01 + advance * std::sin(M_PI / 180.0 * gimbal_yaw);
-
-                                if(g_UAVState.location_source != prometheus_msgs::UAVState::RTK && g_UAVState.location_source != prometheus_msgs::UAVState::GPS)
-                                {
-                                    g_command_now.position_ref[0] *= 1.5;
-                                }
-                            }
-                            else if(g_GimbalState.type == 3)// gx40
-                            {
-                                // 0.09为gx40吊舱到正中心的距离
-                                g_command_now.position_ref[0] = 0.09 + advance * std::cos(M_PI / 180.0 * gimbal_yaw);
-                                g_command_now.position_ref[1] = advance * std::sin(M_PI / 180.0 * gimbal_yaw);
-                            }
-                            
-                            g_command_now.header.stamp = ros::Time::now();
-                            g_command_now.Command_ID = g_command_now.Command_ID + 1;
-                            command_pub.publish(g_command_now);
-                            printf("g_UAVState.position[0] = %f [m] \n",g_UAVState.position[0]);
-                            printf("g_UAVState.position[1] = %f [m] \n",g_UAVState.position[1]);
-                            printf("g_command_now.position_ref[0] = %f [m] \n",g_command_now.position_ref[0]);
-                            printf("g_command_now.position_ref[1] = %f [m] \n",g_command_now.position_ref[1]);
-                            
-                            // 循环判断
-                            int number_time = 5 * hz;// 5s
-                            while((number_time--) > 0)
-                            {
-                                ros::spinOnce();
-                                rate.sleep();
-                            }
                             g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Current_Pos_Hover;
                             g_command_now.header.stamp = ros::Time::now();
                             g_command_now.Command_ID = g_command_now.Command_ID + 1;
                             command_pub.publish(g_command_now);
-                            
-                            printf("g_UAVState.position[0] = %f [m] \n",g_UAVState.position[0]);
-                            printf("g_UAVState.position[1] = %f [m] \n",g_UAVState.position[1]);
-
-                            // 进入降落模式
-                            g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Land;
-                            PCOUT(-1, GREEN, "Find the target and successfully land!!!");
-                            message = "Find the target and start land!!!";
-                            message_type = prometheus_msgs::TextInfo::INFO;
+                            ros::spinOnce();
+                            rate.sleep();
                         }
+                        land_Pxyz_flag = true ;
                     }
-
-                    // 只需要存储当前循环的频率乘以最少的丢失时间
-                    if(last_x_vel.size() == min_lost_time * hz)
+                    if(g_command_now.Agent_CMD == prometheus_msgs::UAVCommand::Current_Pos_Hover && !land_coordinate_origin_init)
                     {
-                        last_x_vel.pop();
-                        last_y_vel.pop();
-                        last_z_vel.pop();
-                    }
-                    // 存储
-                    last_x_vel.push(x_vel);
-                    last_y_vel.push(y_vel);
-                    last_z_vel.push(z_vel);
-
-                    lost_state = LostState::NOT_LOST;
-                }else if(lost_time < 2 * min_lost_time)// 丢失检测目标
-                {
-                    if(!last_x_vel.empty())
-                    {
-                        // 丢失后，根据存储的数据反向控制
-                        x_vel = -last_x_vel.back();
-                        y_vel = -last_y_vel.back();
-                        z_vel = -last_z_vel.back();
                         
-                        // 抛出最后一个数据
-                        pop_back(last_x_vel);
-                        pop_back(last_y_vel);
-                        pop_back(last_z_vel);
-                    }
-                    
-                    // 改变丢失状态
-                    lost_state == LostState::LOST_FIND;
-                }else
-                {
-                    // 如果丢失时间大于最大丢失时间，触发降落 或者 进行其他操作
-                    if(lost_time > max_lost_time)
-                    {
-                        g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Land;
-                        PCOUT(0, RED, "No target found, execute landing!!!");
-                        message = "No target found, execute landing!!!";
-                        message_type = prometheus_msgs::TextInfo::WARN;
-                    }else
-                    {
-                        // 升高无人机
-                        if(height < tracking_height)
-                        {
-                            z_vel = kp_z * (tracking_height - height);
-                        }
-                    }
+                        yaw_tracking_enu = g_UAVState.attitude[2];//rad
+                        Eigen::Vector3d v_body(-g_Detection_raw.py +0.15, -g_Detection_raw.px,-g_Detection_raw.pz );//因为机体系下吊舱向下安装
+                        // 计算旋转矩阵
+                        double cr = cos(g_UAVState.attitude[0]);
+                        double sr = sin(g_UAVState.attitude[0]);
+                        double cp = cos(g_UAVState.attitude[1]);
+                        double sp = sin(g_UAVState.attitude[1]);
+                        double cy = cos(g_UAVState.attitude[2]);
+                        double sy = sin(g_UAVState.attitude[2]);
 
-                    // 完全丢失
-                    lost_state == LostState::COMPLETELY_LOST;
-                }
+                        Eigen::Matrix3d R;
+                        R << cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr,
+                            sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr,
+                            -sp, cp * sr, cp * cr;
 
-                // 重新点击了目标
-                if(g_GimbalState.moveMode == 3/* || std::abs(90 - gimbal_pitch) > ignore_error_pitch*/)
-                {
-                    // 退出降落状态 进入跟踪状态
-                    current_state == State::TRACKING;
-                    // 清空队列
-                    clear(last_x_vel);
-                    clear(last_y_vel);
-                    clear(last_z_vel);
-                    // 悬停
-                    g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Current_Pos_Hover;
-                    g_command_now.Yaw_Rate_Mode = false;
-                }
+                        // 转换到ENU坐标系
+                        Eigen::Vector3d v_enu = R * v_body;
+                        land_coordinate_origin_x = g_UAVState.position[0] + v_enu.x();
+                        land_coordinate_origin_y = g_UAVState.position[1] + v_enu.y();
+                        land_coordinate_origin_z = g_UAVState.position[1] + v_enu.z();
+                        land_coordinate_origin_init = true ;
+
+                    }
+                    if (land_coordinate_origin_init)
+                    {
+                        g_command_now.Agent_CMD == prometheus_msgs::UAVCommand::Move ;
+                        g_command_now.Move_mode == prometheus_msgs::UAVCommand::XYZ_POS;
+                        g_command_now.position_ref[0] = land_coordinate_origin_x;
+                        g_command_now.position_ref[1] = land_coordinate_origin_y;
+                        g_command_now.position_ref[2] = 0;
+                    }
+                }   
             }
-
-            g_command_now.velocity_ref[0] = clamp(x_vel, max_velocity);
-            g_command_now.velocity_ref[1] = clamp(y_vel, max_velocity);
-            g_command_now.velocity_ref[2] = clamp(z_vel, max_velocity);
-            g_command_now.yaw_rate_ref = clamp(yaw_rate, max_yaw_rate) * M_PI / 180;
 
             if(g_command_now.Agent_CMD == prometheus_msgs::UAVCommand::Move && g_command_now.Move_mode == prometheus_msgs::UAVCommand::XYZ_VEL_BODY)
             {
+                g_command_now.velocity_ref[0] = clamp(x_vel, max_velocity);
+                g_command_now.velocity_ref[1] = clamp(y_vel, max_velocity);
+                g_command_now.velocity_ref[2] = clamp(z_vel, max_velocity);
+                g_command_now.yaw_rate_ref = clamp(yaw_rate, max_yaw_rate) * M_PI / 180;
                 printf("x_vel_ref = %f [m/s] \n",g_command_now.velocity_ref[0]);
                 printf("y_vel_ref = %f [m/s] \n",g_command_now.velocity_ref[1]);
                 printf("z_vel_ref = %f [m/s] \n",g_command_now.velocity_ref[2]);
                 printf("yaw_rate_ref = %f [ang/s] \n",g_command_now.yaw_rate_ref);
+            }
+            if (g_command_now.Agent_CMD == prometheus_msgs::UAVCommand::Move && g_command_now.Move_mode == prometheus_msgs::UAVCommand::XYZ_POS)
+            {
+                g_command_now.position_ref[0] = land_coordinate_origin_x;
+                g_command_now.position_ref[1] = land_coordinate_origin_y;
+                g_command_now.position_ref[2] = 0;
+                g_command_now.yaw_ref = yaw_tracking_enu;
+                g_command_now.Yaw_Rate_Mode = false;
+                printf("ENU land_x_vel = %f [m/s] \n", g_command_now.velocity_ref[0]);
+                printf("ENU land_y_vel = %f [m/s] \n", g_command_now.velocity_ref[1]);
+                printf("ENU land_z_vel = %f [m/s] \n", g_command_now.velocity_ref[2]);
+                printf("ENU land_XYZ = %f %f %f  \n", land_coordinate_origin_x, land_coordinate_origin_y, 0);
+            }
+            else
+            {
+                printf("ENU XYZ_VEL Failed \n");
+            }
+            if (height < 0.2)
+            { // 控制无人机降落到0.5时直接触发降落
+                g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Land;
+                PCOUT(-1, GREEN, "Find the target and successfully land!!!");
+                message = "Find the target and start land!!!";
+                message_type = prometheus_msgs::TextInfo::INFO;
             }
         }
 
@@ -740,6 +631,13 @@ int main(int argc, char **argv)
                 current_state = State::INIT;
                 lost_state = LostState::NOT_LOST;
                 lost_time = 0.0;
+                bool land_Pxyz_flag = false ;
+                float land_coordinate_origin_x = 0.0;
+                float land_coordinate_origin_y = 0.0;
+                float land_coordinate_origin_z = 0.0;
+                bool    land_coordinate_origin_init = false;
+                float yaw_tracking_enu = 0;   //rad
+                bool    Cx_Cy_init = false;
 
                 // 清空队列
                 clear(last_x_vel);

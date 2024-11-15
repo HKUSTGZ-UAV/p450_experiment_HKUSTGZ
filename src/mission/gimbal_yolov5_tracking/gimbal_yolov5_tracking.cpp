@@ -60,7 +60,7 @@ void GimbalStateCb(const spirecv_msgs::GimbalState::ConstPtr &msg)
     g_GimbalState = *msg;
     gimbal_roll = g_GimbalState.angleRT[0];
     gimbal_pitch = g_GimbalState.angleRT[1];
-    gimbal_yaw = g_GimbalState.angleRT[2];
+    gimbal_yaw = g_GimbalState.angleRT[2] - 3;
 }
 
 void droneControlStateCb(const prometheus_msgs::UAVControlState::ConstPtr &msg)
@@ -202,8 +202,13 @@ int main(int argc, char **argv)
             // 吊舱的yaw控制SDK左右相反
             if(g_GimbalState.type == 0)
             {
+            	if(std::abs(gimbal_yaw) > 10){
                 // G1 yaw control
                 yaw_rate = -kp_gimbal * gimbal_yaw;
+                }else
+                {
+                g_command_now.Yaw_Rate_Mode = false;
+                }
             }
             else if(g_GimbalState.type == 3)
             {

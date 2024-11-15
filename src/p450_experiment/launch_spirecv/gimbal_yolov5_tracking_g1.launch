@@ -13,6 +13,6 @@
             	<!-- 最大航向角速率（角度） -->
             	<param name="max_yaw_rate" type="double" value="40" />
             	<!-- 跟踪距离 -->
-            	<param name="tracking_distance" type="double" value="10.0" />	
+            	<param name="tracking_distance" type="double" value="5.0" />	
 	</node>
 </launch>

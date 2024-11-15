@@ -1,0 +1,5 @@
+gnome-terminal --window -e 'bash -c "source ~/.bashrc; roslaunch p450_experiment rs_camera_d435i.launch; exec bash"' \
+--tab -e 'bash -c "sleep 4; source ~/.bashrc; roslaunch p450_experiment depth_to_octomap.launch; exec bash"' \
+--tab -e 'bash -c "sleep 4; source ~/.bashrc; roslaunch p450_experiment radius_filter_test.launch; exec bash"' \
+--tab -e 'bash -c "sleep 6; source ~/.bashrc; roslaunch p450_experiment ego_planner_octomap_filter.launch; exec bash"' \
+--tab -e 'bash -c "sleep 8; source ~/.bashrc; roslaunch p450_experiment rviz_d435i.launch; exec bash"' \

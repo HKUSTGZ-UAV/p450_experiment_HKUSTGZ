@@ -24,6 +24,8 @@ find_package(catkin REQUIRED COMPONENTS
   spirecv_msgs
 )
 
+find_package(PCL 1.8 REQUIRED)
+
 ##  System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
@@ -91,6 +93,9 @@ target_link_libraries(gimbal_yolov5_tracking ${catkin_LIBRARIES} ${SV_LIBRARIES}
 
 add_executable(gimbal_aruco_landing gimbal_aruco_landing/gimbal_aruco_landing.cpp)
 target_link_libraries(gimbal_aruco_landing ${catkin_LIBRARIES}  ${SV_LIBRARIES})
+
+add_executable(radius_filter radius_filter/radius_filter.cpp)
+target_link_libraries(radius_filter ${catkin_LIBRARIES}  ${PCL_LIBRARIES})
 
 #############
 ## Install ##

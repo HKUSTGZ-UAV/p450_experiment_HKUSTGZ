@@ -44,8 +44,6 @@ plugin_blacklist:
 - tunnel
 - vibration
 - wheel_odometry
-- gps_rtk
-- gps_status
 
 
 plugin_whitelist: # 如果模块即被同时声明在plugin_blacklist和plugin_whitelist中，也会启动
@@ -65,3 +63,5 @@ plugin_whitelist: # 如果模块即被同时声明在plugin_blacklist和plugin_w
 - distance_sensor
 - vision_pose_estimate
 - vision_speed_estimate
+- gps_rtk
+- gps_status

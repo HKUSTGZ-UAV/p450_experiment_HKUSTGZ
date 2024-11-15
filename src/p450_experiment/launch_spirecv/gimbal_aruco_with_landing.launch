@@ -16,9 +16,9 @@
             	<!-- 降落高度 -->
             	<param name="land_height" type="double" value="0.5" />
             	<!-- 最长丢失时间 -->
-            	<param name="max_lost_time" type="double" value="10.0" />
+            	<param name="max_lost_time" type="double" value="1000.0" />
             	<!-- 最短丢失时间 -->
-            	<param name="min_lost_time" type="double" value="1.0" />	
+            	<param name="min_lost_time" type="double" value="1000.0" />	
             	<!-- 静止速度 -->
             	<param name="static_vel_thresh" type="double" value="0.03" />
             	<!-- 吊舱相对地面静止高度的偏移量 -->
