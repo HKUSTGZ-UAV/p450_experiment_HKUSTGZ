@@ -17,7 +17,7 @@
     <!-- 里程计话题 -->
     <arg name="odometry_topic" value="/prometheus/odom"/>
     <!-- 相机及深度信息仿真中没有使用，此处可忽略(真机中使用) -->
-    <arg name="camera_pose_topic" value="/prometheus/camera_odom"/>
+    <arg name="camera_pose_topic" value="no_camera_pose"/>
     <arg name="depth_topic" value="/camera/depth/image_rect_raw1"/>
     <arg name="cx" value="326.2303466796875"/>
     <arg name="cy" value="235.4907684326172"/>

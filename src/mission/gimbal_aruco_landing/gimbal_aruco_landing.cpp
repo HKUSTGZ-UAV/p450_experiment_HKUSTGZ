@@ -545,7 +545,7 @@ int main(int argc, char **argv)
                         Eigen::Vector3d v_enu = R * v_body;
                         land_coordinate_origin_x = g_UAVState.position[0] + v_enu.x();
                         land_coordinate_origin_y = g_UAVState.position[1] + v_enu.y();
-                        land_coordinate_origin_z = g_UAVState.position[1] + v_enu.z();
+                        land_coordinate_origin_z = g_UAVState.position[2] + v_enu.z();
                         land_coordinate_origin_init = true ;
 
                     }
@@ -581,7 +581,7 @@ int main(int argc, char **argv)
                 printf("ENU land_x_vel = %f [m/s] \n", g_command_now.velocity_ref[0]);
                 printf("ENU land_y_vel = %f [m/s] \n", g_command_now.velocity_ref[1]);
                 printf("ENU land_z_vel = %f [m/s] \n", g_command_now.velocity_ref[2]);
-                printf("ENU land_XYZ = %f %f %f  \n", land_coordinate_origin_x, land_coordinate_origin_y, 0);
+                printf("ENU land_XYZ = %f %f %f  \n", g_command_now.position_ref[0], g_command_now.position_ref[1], g_command_now.position_ref[2]);
             }
             else
             {
@@ -631,13 +631,13 @@ int main(int argc, char **argv)
                 current_state = State::INIT;
                 lost_state = LostState::NOT_LOST;
                 lost_time = 0.0;
-                bool land_Pxyz_flag = false ;
-                float land_coordinate_origin_x = 0.0;
-                float land_coordinate_origin_y = 0.0;
-                float land_coordinate_origin_z = 0.0;
-                bool    land_coordinate_origin_init = false;
-                float yaw_tracking_enu = 0;   //rad
-                bool    Cx_Cy_init = false;
+                land_Pxyz_flag = false ;
+                land_coordinate_origin_x = 0.0;
+                land_coordinate_origin_y = 0.0;
+                land_coordinate_origin_z = 0.0;
+                land_coordinate_origin_init = false;
+                yaw_tracking_enu = 0;   //rad
+                Cx_Cy_init = false;
 
                 // 清空队列
                 clear(last_x_vel);

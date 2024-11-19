@@ -1,14 +1,9 @@
 #!/bin/bash
 catkin_make --source src/Prometheus/Modules/common --build build/common
 catkin_make --source src/Prometheus/Modules/uav_control --build build/uav_control
-#catkin_make --source src/Prometheus/Modules/object_detection --build build/object_detection
 catkin_make --source src/Prometheus/Modules/communication --build build/communication
-#catkin_make --source src/object_circlex_detection --build build/object_circlex_detection
-#catkin_make --source src/gimbal_control/src/gimbal_control --build build/gimbal_control
+catkin_make --source src/Prometheus/Modules/tutorial_demo --build build/tutorial_demo
 catkin_make --source src/p450_experiment --build build/p450_experiment
-#catkin_make --source src/mission --build build/mission
-#./src/siamprn_object_tracking/complie.sh && \
-#catkin_make --source src/siamprn_object_tracking/ros/src/track_ros --build build/siamrpn_track
 
 # for spirecv-ros
 release_num=$(lsb_release -r --short)
@@ -38,6 +33,9 @@ catkin_make --source src/Prometheus/Modules/FAST_LIO --build build/FAST_LIO
 
 # for bluesea2
 catkin_make --source src/bluesea2 --build build/bluesea2
+
+# for rplidar
+catkin_make --source src/rplidar_ros --build build/rplidar_ros
 
 # for livox_ros_driver2
 catkin_make --source src/livox_ros_driver2 --build build/livox_ros_driver2 -DROS_EDITION=ROS1
