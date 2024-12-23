@@ -8,13 +8,13 @@
             	<!-- 更具yaw误差调整无人机航向角 -->
             	<param name="kp_gimbal" type="double" value="1.0" />
             	<!-- 最大X轴速度 -->
-            	<param name="max_velocity" type="double" value="2.5" />
+            	<param name="max_velocity" type="double" value="1.0" />
             	<!-- 最大航向角速率（角度） -->
             	<param name="max_yaw_rate" type="double" value="40" />
             	<!-- 吊舱pitch角度误差 -->
             	<param name="ignore_error_pitch" type="double" value="3.0" />
             	<!-- 降落高度 -->
-            	<param name="land_height" type="double" value="0.5" />
+            	<param name="land_height" type="double" value="0.3" />
             	<!-- 最长丢失时间 -->
             	<param name="max_lost_time" type="double" value="1000.0" />
             	<!-- 最短丢失时间 -->

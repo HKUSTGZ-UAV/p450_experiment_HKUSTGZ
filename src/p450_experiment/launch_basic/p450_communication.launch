@@ -2,7 +2,7 @@
 
     <arg name="swarm_num" default="1"/>
     <arg name="autoload" default="true"/>
-    <arg name="uav_control_start" default="gnome-terminal -- roslaunch p450_experiment p450_onboard.launch"/>
+    <arg name="uav_control_start" default="gnome-terminal -- /home/amov/p450_experiment/src/p450_experiment/scripts/p450_onboard.sh"/>
     <arg name="close_uav_control" default="gnome-terminal -- rosnode kill `rosnode list | grep -v /communication_bridge | grep -v /rosout | grep -v /rosapi | grep -v /rosbridge_websocket`"/>
     <arg name="swarm_control_start" default=""/>
     <arg name="close_swarm_control" default=""/>

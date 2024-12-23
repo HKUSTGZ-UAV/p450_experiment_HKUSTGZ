@@ -48,13 +48,16 @@ std::queue<float> last_y_vel;
 std::queue<float> last_z_vel;
 std::queue<float> last_yaw_rate; // 存储在跟踪状态下无人机的偏航数据
 
-bool land_Pxyz_flag = false ;
-float land_coordinate_origin_x = 0.0;
-float land_coordinate_origin_y = 0.0;
-float land_coordinate_origin_z = 0.0;
-bool    land_coordinate_origin_init = false;
-float yaw_tracking_enu = 0;   //rad
-bool    Cx_Cy_init = false;
+bool  land_Pxyz_flag              = false ;
+float land_coordinate_origin_x    = 0.0;
+float land_coordinate_origin_y    = 0.0;
+float land_coordinate_origin_z    = 0.0;
+float land_rel_alt_origin_z       = 0.0;
+float land_rel_alt_det_z          = 0.0;
+bool  land_coordinate_origin_init = false;
+float yaw_tracking_enu            = 0;   //rad
+bool  Cx_Cy_init                  = false;
+bool  agent                       = true;
 
 
 void droneStateCb(const prometheus_msgs::UAVState::ConstPtr &msg)
@@ -522,12 +525,14 @@ int main(int argc, char **argv)
                             rate.sleep();
                         }
                         land_Pxyz_flag = true ;
+                        land_rel_alt_origin_z = g_Detection_raw.pz ;
+                        land_rel_alt_det_z = g_UAVState.position[2] - land_rel_alt_origin_z ;
                     }
                     if(g_command_now.Agent_CMD == prometheus_msgs::UAVCommand::Current_Pos_Hover && !land_coordinate_origin_init)
                     {
                         
                         yaw_tracking_enu = g_UAVState.attitude[2];//rad
-                        Eigen::Vector3d v_body(-g_Detection_raw.py +0.15, -g_Detection_raw.px,-g_Detection_raw.pz );//因为机体系下吊舱向下安装
+                        Eigen::Vector3d v_body(-g_Detection_raw.py + 0.15, -g_Detection_raw.px,-g_Detection_raw.pz );//因为机体系下吊舱向下安装
                         // 计算旋转矩阵
                         double cr = cos(g_UAVState.attitude[0]);
                         double sr = sin(g_UAVState.attitude[0]);
@@ -555,7 +560,7 @@ int main(int argc, char **argv)
                         g_command_now.Move_mode == prometheus_msgs::UAVCommand::XYZ_POS;
                         g_command_now.position_ref[0] = land_coordinate_origin_x;
                         g_command_now.position_ref[1] = land_coordinate_origin_y;
-                        g_command_now.position_ref[2] = 0;
+                        g_command_now.position_ref[2] = land_rel_alt_det_z - 0.2;
                     }
                 }   
             }
@@ -575,25 +580,33 @@ int main(int argc, char **argv)
             {
                 g_command_now.position_ref[0] = land_coordinate_origin_x;
                 g_command_now.position_ref[1] = land_coordinate_origin_y;
-                g_command_now.position_ref[2] = 0;
+                g_command_now.position_ref[2] = land_rel_alt_det_z - 0.2;
                 g_command_now.yaw_ref = yaw_tracking_enu;
                 g_command_now.Yaw_Rate_Mode = false;
-                printf("ENU land_x_vel = %f [m/s] \n", g_command_now.velocity_ref[0]);
-                printf("ENU land_y_vel = %f [m/s] \n", g_command_now.velocity_ref[1]);
-                printf("ENU land_z_vel = %f [m/s] \n", g_command_now.velocity_ref[2]);
+                // printf("ENU land_x_vel = %f [m/s] \n", g_command_now.velocity_ref[0]);
+                // printf("ENU land_y_vel = %f [m/s] \n", g_command_now.velocity_ref[1]);
+                // printf("ENU land_z_vel = %f [m/s] \n", g_command_now.velocity_ref[2]);
                 printf("ENU land_XYZ = %f %f %f  \n", g_command_now.position_ref[0], g_command_now.position_ref[1], g_command_now.position_ref[2]);
             }
             else
             {
                 printf("ENU XYZ_VEL Failed \n");
             }
-            if (height < 0.2)
-            { // 控制无人机降落到0.5时直接触发降落
+            if (abs(g_UAVState.position[2] - land_rel_alt_det_z) < 0.22)
+            { // 控制无人机降落到0.22时直接触发降落
                 g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Land;
                 PCOUT(-1, GREEN, "Find the target and successfully land!!!");
                 message = "Find the target and start land!!!";
                 message_type = prometheus_msgs::TextInfo::INFO;
-            }
+            }else if(abs(g_UAVState.position[2] - land_rel_alt_det_z)< 1 && agent)
+	    {
+	        Cx_Cy_init = false;
+	        land_Pxyz_flag = false;
+	        agent = false;
+	        land_coordinate_origin_init = false;
+	        printf("agent-------------------------------- \n");
+	    }
+
         }
 
         // Publish
@@ -624,20 +637,23 @@ int main(int argc, char **argv)
             {
                 // 吊舱是否需要归中
                 std_srvs::SetBool set_home;
-                set_home.request.data = true;
+                set_home.request.data       = true;
                 gimbal_home_client_.call(set_home);
                 // 初始化
-                tracked_id = -1;
-                current_state = State::INIT;
-                lost_state = LostState::NOT_LOST;
-                lost_time = 0.0;
-                land_Pxyz_flag = false ;
-                land_coordinate_origin_x = 0.0;
-                land_coordinate_origin_y = 0.0;
-                land_coordinate_origin_z = 0.0;
+                tracked_id                  = -1;
+                current_state               = State::INIT;
+                lost_state                  = LostState::NOT_LOST;
+                lost_time                   = 0.0;
+                land_Pxyz_flag              = false ;
+                land_coordinate_origin_x    = 0.0;
+                land_coordinate_origin_y    = 0.0;
+                land_coordinate_origin_z    = 0.0;
+                land_rel_alt_origin_z       = 0.0;
+                land_rel_alt_det_z          = 0.0;
                 land_coordinate_origin_init = false;
-                yaw_tracking_enu = 0;   //rad
-                Cx_Cy_init = false;
+                yaw_tracking_enu            = 0;   //rad
+                Cx_Cy_init                  = false;
+                agent                       = true;
 
                 // 清空队列
                 clear(last_x_vel);
@@ -645,7 +661,7 @@ int main(int argc, char **argv)
                 clear(last_z_vel); 
                 clear(last_yaw_rate); 
 
-                g_command_now.Agent_CMD = prometheus_msgs::UAVCommand::Current_Pos_Hover;
+                g_command_now.Agent_CMD     = prometheus_msgs::UAVCommand::Current_Pos_Hover;
                 g_command_now.Yaw_Rate_Mode = false;
                 // 退出降落循环
                 break;
@@ -659,3 +675,4 @@ int main(int argc, char **argv)
     }
     return 0;
 }
+

@@ -4,6 +4,6 @@
         <param name="camera_parameters" type="string" value="$(find p450_experiment)/config/spirecv_config/calib_webcam_640x480.yaml" />
         <param name="local_saving_path" type="string" value="$(find spirecv_ros)" />
 	<param name="input_image_topic" type="string" value="/uav1/camera/color/image_raw" />
-	<param name="output_image_topic" type="string" value="/spirecv/camera/rgb/image_aruco_det" />
+	<param name="output_image_topic" type="string" value="/uav1/spirecv/image_det" />
     </node>
 </launch>
