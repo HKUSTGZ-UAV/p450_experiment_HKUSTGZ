@@ -2,3 +2,10 @@
 build/*
 devel/*
 .vscode/
+box.pt
+best.pt
+best.engine
+best.onnx
+box.engine
+box.onnx
+src/livox_ros_driver2

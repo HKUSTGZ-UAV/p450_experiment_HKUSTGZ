@@ -2,7 +2,7 @@
   <arg name="serial_no"           default=""/>
   <arg name="usb_port_id"         default=""/>
   <arg name="device_type"         default=""/>
-  <arg name="json_file_path"      default="/home/amov/emitter_off.json"/>
+  <arg name="json_file_path"      default=""/>
   <arg name="camera"              default="uav1/camera"/>
   <arg name="tf_prefix"           default="$(arg camera)"/>
   <arg name="external_manager"    default="false"/>
@@ -21,8 +21,10 @@
   <arg name="enable_infra1"       default="false"/>
   <arg name="enable_infra2"       default="false"/>
 
-  <arg name="color_width"         default="640"/>
-  <arg name="color_height"        default="480"/>
+  <!-- <arg name="color_width"         default="640"/>
+  <arg name="color_height"        default="480"/> -->
+  <arg name="color_width"  value="1920"/>
+  <arg name="color_height" value="1080"/>
   <arg name="enable_color"        default="true"/>
 
   <arg name="fisheye_fps"         default="-1"/>

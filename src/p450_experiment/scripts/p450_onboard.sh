@@ -2,7 +2,7 @@
 
 # 定义待检测的 IP 地址
 IP1="192.168.1.12"
-LIDAR_IP="192.168.1.100"
+LIDAR_IP="192.168.1.175"
 
 # Ping 第一个 IP 地址
 if ping -c 1 $IP1 &> /dev/null; then
