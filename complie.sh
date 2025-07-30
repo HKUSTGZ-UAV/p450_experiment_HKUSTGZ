@@ -32,10 +32,10 @@ catkin_make --source src/Prometheus/Modules/motion_planning --build build/motion
 catkin_make --source src/Prometheus/Modules/FAST_LIO --build build/FAST_LIO
 
 # for bluesea2
-catkin_make --source src/bluesea2 --build build/bluesea2
+# catkin_make --source src/bluesea2 --build build/bluesea2
 
 # for rplidar
-catkin_make --source src/rplidar_ros --build build/rplidar_ros
+# catkin_make --source src/rplidar_ros --build build/rplidar_ros
 
 # for livox_ros_driver2
 catkin_make --source src/livox_ros_driver2 --build build/livox_ros_driver2 -DROS_EDITION=ROS1

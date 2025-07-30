@@ -29,7 +29,7 @@ publish:
     dense_publish_en: true       # 是否发布密集的点云数据
     scan_bodyframe_pub_en: true  # 是否在IMU的体坐标系下发布扫描数据
 pcd_save:
-    pcd_save_en: true           # 是否启用PCD文件保存
+    pcd_save_en: false           # 是否启用PCD文件保存
     interval: -1                 # 保存PCD文件的间隔
                                  # -1表示将所有数据保存到一个PCD文件中，如果数据量非常大，这可能会导致内存问题。
 
