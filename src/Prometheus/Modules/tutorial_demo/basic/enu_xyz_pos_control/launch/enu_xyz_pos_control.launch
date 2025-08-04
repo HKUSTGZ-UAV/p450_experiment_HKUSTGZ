@@ -1,0 +1,21 @@
+<!-- <launch>
+
+    <node pkg="prometheus_demo" type="enu_xyz_pos_control" name="enu_xyz_pos_control" output="screen">
+        <param name="uav_id" value="1"/>
+    </node>
+
+</launch> -->
+<launch>
+    <node pkg="prometheus_demo" type="enu_xyz_pos_control" name="enu_xyz_pos_control" output="screen">
+        <!-- 无人机 ID -->
+        <param name="uav_id" value="1"/>
+
+        <!-- 目标偏移量（相对机体系） -->
+        <param name="tracking_delta_x" value="0.0"/>
+        <param name="tracking_delta_y" value="0.0"/>
+        <param name="tracking_delta_z" value="0.0"/>
+
+        <!-- 视觉丢失容错阈值（单位：帧） -->
+        <param name="vision_lost_threshold" value="10"/>
+    </node>
+</launch>
