@@ -5,19 +5,6 @@ catkin_make --source src/Prometheus/Modules/communication --build build/communic
 catkin_make --source src/Prometheus/Modules/tutorial_demo --build build/tutorial_demo
 catkin_make --source src/p450_experiment --build build/p450_experiment
 
-# for spirecv-ros
-release_num=$(lsb_release -r --short)
-echo $release_num
-if [ $release_num == "18.04" ]
-then
-  catkin_make --source src/spirecv-ros/cv_bridge_1804 --build build/cv_bridge
-else
-  catkin_make --source src/spirecv-ros/cv_bridge_2004 --build build/cv_bridge
-fi
-catkin_make --source src/spirecv-ros/sv-msgs --build build/msgs
-catkin_make --source src/spirecv-ros/sv-srvs --build build/srvs
-catkin_make --source src/spirecv-ros/sv-rosapp --build build/rosapp
-
 # for realsense-ros
 catkin_make --source src/realsense-ros/realsense2_camera --build build/realsense2_camera
 catkin_make --source src/realsense-ros/realsense2_description --build build/realsense2_description
